@@ -1,0 +1,27 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Asset
+title: AJ Asset 1 CLI
+name: aj-asset-1-cli
+owner:
+  type: team
+  id: ff66efd3-c017-4d6a-ab87-c758ee99e3d0
+  teamName: TEST_TEAM_1
+spec:
+  type: API
+  description: AJ Asset 1 CLI Description
+access:
+  approval: manual
+state: draft
+tags:
+  - SNGroup:api-gateway-team
+  - email:api_gateway_team@centene.co
+  - appid:axwy
+  - productid:iapp
+  - dataclass:internal
+attributes:
+  SNGroup: api-gateway-team
+  email: api_gateway_team@centene.co
+  appid: axwy
+  productid: iapp
+  dataclass: internal

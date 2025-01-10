@@ -1,0 +1,9 @@
+group: catalog
+apiVersion: v1alpha1
+kind: ReleaseTag
+metadata:
+  scope:
+    kind: Product
+    name: aj-product-cli
+spec:
+  releaseType: major

@@ -1,0 +1,97 @@
+assets:
+  - name: AJ Asset 1 CLI
+    description: AJ Asset 1 CLI Description DEMO CHANGE
+    activate:
+      release: true
+      releaseType: major
+    services:
+    - name: apiw-enterprise-idcards
+      environment: cnc-aws-iapp-tst-axwy-us-east-2
+      title: My Custom API Name
+    - name: pcst-qdev
+      environment: cnc-aws-iapp-dev-axwy-us-east-1
+      title: Some API
+    owner:
+      teamName: TEST_TEAM_1
+    accessControlList:
+      - teamName: TEST_TEAM_2
+      - teamName: IT_EnterpriseArchitecture
+    attributes:
+      SNGroup: api-gateway-team
+      email: api_gateway_team@centene.co
+      appid: axwy
+      productid: iapp
+      dataclass: internal
+    tags:
+    - SNGroup:api-gateway-team
+    - email:api_gateway_team@centene.co
+    - appid:axwy
+    - productid:iapp
+    - dataclass:internal
+  - name: AJ Asset 2 CLI
+    activate:
+      releaseType: major
+    services:
+    - name: axwy-api-endpoint-apikey
+      environment: cnc-rco-iapp-dev-axwy
+      title: My Custom API Name API KEY
+    description: AJ Asset 2 CLI Description
+    owner:
+      teamName: TEST_TEAM_1
+    accessControlList:
+    - teamName: TEST_TEAM_2
+    attributes:
+      SNGroup: api-gateway-team
+      email: api_gateway_team@centene.co
+      appid: axwy
+      productid: iapp
+      dataclass: internal
+    tags:
+    - SNGroup:api-gateway-team
+    - email:api_gateway_team@centene.co
+    - appid:axwy
+    - productid:iapp
+    - dataclass:internal
+product:
+  name: AJ Product CLI
+  description: AJ Product CLI Description
+  owner:
+    teamName: TEST_TEAM_1
+  assets:
+    - name: AJ Asset 1 CLI
+    - name: AJ Asset 2 CLI
+  plans:
+    - quotas:
+        - services:
+          - name: "axwy-api-endpoint-apikey"
+            asset: "AJ Asset 1 CLI"
+    - quotas:
+        - services:
+          - name: "axwy-api-endpoint-apikey"
+            asset: "AJ Asset 1 CLI"
+    - quotas:
+        - services:
+          - name: "axwy-api-endpoint-apikey"
+            asset: "AJ Asset 1 CLI"
+    - quotas:
+        - services:
+          - name: "axwy-api-endpoint-apikey"
+            asset: "AJ Asset 1 CLI"
+          
+      state: draft
+  activate:
+    releaseType: major
+    marketplace:
+      name: "Stage Marketplace"
+  attributes:
+    SNGroup: api-gateway-team
+    email: api_gateway_team@centene.co
+    appid: axwy
+    productid: iapp
+    dataclass: internal
+  tags:
+  - SNGroup:api-gateway-team
+  - email:api_gateway_team@centene.co
+  - appid:axwy
+  - productid:iapp
+  - dataclass:internal

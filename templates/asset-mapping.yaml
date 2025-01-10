@@ -1,0 +1,23 @@
+group: catalog
+apiVersion: v1alpha1
+kind: AssetMapping
+name: "{{func.generate_name}}"
+metadata:
+  scope:
+    kind: Asset
+    name: "{{func.get_parent_name}}"
+spec:
+  inputs:
+    apiService: management/{{assets.[].services.[].environment}}/{{assets.[].services.[].name}}
+    apiServiceInstance: management/{{assets.[].services.[].environment}}/{{assets.[].services.[].name}}
+    # assetResourceTitle: "{{assets.[].services.[].title}}"
+# spec:
+#   inputs:
+#     # Indicates which APIService to monitor.
+#     apiService: management/<environmentName>/<apiServiceName>
+#     # The APIServiceInstance to monitor changes from, such as revision and endpoint changes.
+#     # This property is needed if APIService has multiple APIServiceInstances.
+#     apiServiceInstance: management/<environmentName>/<apiServiceInstanceName>
+#     # Optional property used to set the title of the AssetResource, which is shown in Marketplace.
+#     # If not set, then mapping will use APIService's title.
+#     assetResourceTitle: My Custom API Name

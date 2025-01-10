@@ -1,0 +1,16 @@
+{
+    group: "catalog",
+    apiVersion: "v1alpha1",
+    kind: "PublishedProduct",
+    metadata: {
+        scope: {
+            kind: "Marketplace",
+            name: "{{product.activate.marketplace.name}}",
+        }
+    },
+    spec: {
+        product: {
+            name: "{{product.name}}"
+        }
+    }
+}

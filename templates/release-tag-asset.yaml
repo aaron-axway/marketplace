@@ -1,0 +1,10 @@
+group: catalog
+apiVersion: "v1alpha1"
+kind: "ReleaseTag"
+# name: "{{func.get_parent_name}}"
+metadata:
+  scope:
+    kind: "Asset"
+    name: "{{func.get_parent_name}}"
+spec:
+  releaseType: "{{assets.[].activate.releaseType}}"

@@ -1,0 +1,149 @@
+product:
+  plans:
+    - name: Standard
+      description: "Standard Plan"
+      state: draft
+      type: paid
+      # "billing" key is required for "paid" types only not for "free" types
+      billing:
+        cycle: recurring
+        price: 100
+        setup:
+          price: 0
+        currency: USD
+        interval: monthly
+      subscription:
+        renewal: automatic
+        approval: automatic
+        interval:
+          type: months
+          length: 1
+        definition: subscription-reason
+      quotas:
+        - name: "Standard Quota"
+          unit: transactions
+          usage:
+            limit: 500
+            interval: monthly
+          pricing:
+            type: fixed
+            limit:
+              type: loose
+              value: 1000
+              overages:
+                value: 50
+            interval: monthly
+    - name: Tier Volume
+      description: "Tier Volume Plan"
+      type: paid
+      billing:
+        cycle: recurring
+        price: 0
+        setup:
+          price: 0
+        currency: USD
+        interval: monthly
+      subscription:
+        renewal: automatic
+        approval: automatic
+        interval:
+          type: months
+          length: 1
+      quotas:
+        - name: "Tier Volume Quota"
+          unit: transactions
+          pricing:
+            type: volume
+            limit:
+              type: tiered
+              tiers:
+                - to: 500
+                  cost: 2
+                  from: 1
+                  flatFee: 0
+                - to: 5000
+                  cost: 1
+                  from: 501
+                  flatFee: 10
+                - to: 10000
+                  cost: 0.5
+                  from: 5001
+                  flatFee: 20
+    - name: Tier Graduated
+      description: "Tier Graduated Plan"
+      type: paid
+      billing:
+        cycle: recurring
+        price: 0
+        setup:
+          price: 0
+        currency: USD
+        interval: monthly
+      subscription:
+        renewal: automatic
+        approval: automatic
+        interval:
+          type: months
+          length: 1
+      quotas:
+        - name: "Tier Graduated Quota"
+          unit: transactions
+          pricing:
+            type: graduated
+            limit:
+              type: tiered
+              tiers:
+                - to: 500
+                  cost: 2
+                  from: 1
+                  flatFee: 0
+                - to: 5000
+                  cost: 1
+                  from: 501
+                  flatFee: 10
+                - to: 10000
+                  cost: 0.5
+                  from: 5001
+                  flatFee: 20
+    - name: Pay Per Use
+      description: "Pay Per Use Plan"
+      type: paid
+      billing:
+        cycle: recurring
+        price: 0
+        setup:
+          price: 0
+        currency: USD
+        interval: monthly
+      subscription:
+        renewal: automatic
+        approval: automatic
+        interval:
+          type: months
+          length: 1
+        definition: subscription-reason
+      quotas:
+        - name: "Quota Pay Per Use"
+          unit: transactions
+          usage:
+            limit: 10000
+            interval: daily
+          pricing:
+            cost: 0.01
+            type: perunit
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          

@@ -1,0 +1,10 @@
+group: catalog
+apiVersion: v1alpha1
+kind: PublishedProduct
+metadata:
+  scope:
+    kind: Marketplace
+    name: Stage Marketplace
+spec:
+  product:
+    name: AJ Product CLI

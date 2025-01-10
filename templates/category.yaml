@@ -1,0 +1,27 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Category
+name: aj-category
+title: aj category
+metadata:
+  id: 8a2e838893bd35400193d210abca7c7a
+  audit:
+    createTimestamp: 2024-12-17T00:42:08.202+0000
+    createUserId: 2588d2f3-6ac4-442f-85ad-94ff963496b1
+    modifyTimestamp: 2024-12-17T00:42:08.202+0000
+    modifyUserId: 2588d2f3-6ac4-442f-85ad-94ff963496b1
+  acl: []
+  accessRights:
+    canChangeOwner: true
+    canDelete: true
+    canWrite: true
+    canRead: true
+  resourceVersion: '0'
+  references: []
+  selfLink: /catalog/v1alpha1/categories/aj-category
+attributes: {}
+finalizers: []
+tags: []
+spec:
+  restriction:
+    type: asset

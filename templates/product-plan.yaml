@@ -1,0 +1,15 @@
+group: catalog
+apiVersion: v1alpha1
+kind: ProductPlan
+title: "{{product.plans.[].name}}"
+name: "{{func.generate_name}}-{{func.format_name(product.name)}}"
+owner:
+  type: team
+  id: "{{func.lookup_team_id}}"
+spec:
+  product: "{{func.get_parent_name}}"
+  description: "{{product.plans.[].description}}"
+  type: "{{product.plans.[].type}}"
+  billing: "{{product.plans.[].billing}}"
+  subscription: "{{product.plans.[].subscription}}"
+state: draft

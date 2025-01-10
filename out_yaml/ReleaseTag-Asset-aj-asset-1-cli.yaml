@@ -1,0 +1,9 @@
+group: catalog
+apiVersion: v1alpha1
+kind: ReleaseTag
+metadata:
+  scope:
+    kind: Asset
+    name: aj-asset-1-cli
+spec:
+  releaseType: major

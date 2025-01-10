@@ -1,0 +1,16 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Product
+title: "{{product.name}}"
+name: "{{func.generate_name}}"
+owner:
+  type: team
+  id: "{{func.lookup_team_id}}"
+spec:
+  assets: "{{func.get_asset_name_list}}"
+  # categories:
+    # - cases-higherpriority
+  description: "{{product.description}}"
+attributes: {}
+tags: []
+state: draft

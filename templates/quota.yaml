@@ -1,0 +1,23 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Quota
+name: "{{func.generate_name}}"
+title: "{{product.plans.[].quotas.[].name}}"
+metadata:
+  scope:
+    kind: ProductPlan
+    name: "{{func.get_parent_name}}-{{func.format_name(product.name)}}"
+spec:
+  unit: "{{product.plans.[].quotas.[].unit}}"
+  pricing: "{{product.plans.[].quotas.[].pricing}}"
+  usage: "{{product.plans.[].quotas.[].usage}}"
+  # unit: transactions
+  # pricing:
+  #   type: fixed
+  #   limit:
+  #     type: strict
+  #     value: 1
+  #   interval: monthly
+  resources: "{{func.get_asset_resources}}"
+    # - kind: AssetResource
+    #   name: "{{product.plans.[].quotas.[].services.[].asset}}/{{product.plans.[].quotas.[].services.[].name}}"

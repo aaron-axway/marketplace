@@ -1,0 +1,113 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Quota
+name: standard-quota
+title: Standard Quota
+metadata:
+  scope:
+    kind: ProductPlan
+    name: standard-aj-product-cli
+spec:
+  unit: transactions
+  pricing:
+    type: fixed
+    limit:
+      type: loose
+      value: 1000
+      overages:
+        value: 50
+    interval: monthly
+  usage:
+    limit: 500
+    interval: monthly
+  resources:
+    - kind: AssetResource
+      name: aj-asset-1-cli/pcst-qdev
+
+---
+group: catalog
+apiVersion: v1alpha1
+kind: Quota
+name: tier-volume-quota
+title: Tier Volume Quota
+metadata:
+  scope:
+    kind: ProductPlan
+    name: tier-volume-aj-product-cli
+spec:
+  unit: transactions
+  pricing:
+    type: volume
+    limit:
+      type: tiered
+      tiers:
+        - to: 500
+          cost: 2
+          from: 1
+          flatFee: 0
+        - to: 5000
+          cost: 1
+          from: 501
+          flatFee: 10
+        - to: 10000
+          cost: 0.5
+          from: 5001
+          flatFee: 20
+  resources:
+    - kind: AssetResource
+      name: aj-asset-1-cli/pcst-qdev
+
+---
+group: catalog
+apiVersion: v1alpha1
+kind: Quota
+name: tier-graduated-quota
+title: Tier Graduated Quota
+metadata:
+  scope:
+    kind: ProductPlan
+    name: tier-graduated-aj-product-cli
+spec:
+  unit: transactions
+  pricing:
+    type: graduated
+    limit:
+      type: tiered
+      tiers:
+        - to: 500
+          cost: 2
+          from: 1
+          flatFee: 0
+        - to: 5000
+          cost: 1
+          from: 501
+          flatFee: 10
+        - to: 10000
+          cost: 0.5
+          from: 5001
+          flatFee: 20
+  resources:
+    - kind: AssetResource
+      name: aj-asset-1-cli/pcst-qdev
+
+---
+group: catalog
+apiVersion: v1alpha1
+kind: Quota
+name: quota-pay-per-use
+title: Quota Pay Per Use
+metadata:
+  scope:
+    kind: ProductPlan
+    name: pay-per-use-aj-product-cli
+spec:
+  unit: transactions
+  pricing:
+    cost: 0.01
+    type: perunit
+  usage:
+    limit: 10000
+    interval: daily
+  resources:
+    - kind: AssetResource
+      name: aj-asset-1-cli/pcst-qdev

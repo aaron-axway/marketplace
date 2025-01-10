@@ -1,0 +1,29 @@
+group: catalog
+apiVersion: v1alpha1
+kind: AccessControlList
+name: edit-only-access
+title: edit-only-access
+metadata:
+  scope:
+    kind: "{{func.get_parent_kind}}"
+    name: "{{func.get_parent_name}}"
+spec:
+  rules:
+    - access:
+        - level: scope
+          allowWrite: true
+          allowDelete: false
+          allowCreateScoped: false
+        - kind: '*'
+          level: scopedKind
+          allowWrite: true
+          allowCreate: true
+          allowDelete: true
+        - kind: AccessControlList
+          level: scopedKind
+          allowWrite: true
+          allowCreate: true
+          allowDelete: true
+  subjects: "{{func.lookup_teams_ids}}"
+    # - id: 118f8aff-10ed-415d-8118-4f53e395105f
+    #   type: team
