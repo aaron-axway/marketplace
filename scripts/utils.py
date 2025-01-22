@@ -9,6 +9,9 @@ KEY_TO_KIND_MAP = {
     "plans": "ProductPlan",
     "quotas": "Quota",
     "marketplace": "PublishedProduct",
+    "documentation": "Document",
+    "supportContact": "SupportContact",
+    "releaseState": "ApiServiceInstance",
 }
 
 KEY_TO_TEMPLATE_MAP = {
@@ -16,12 +19,24 @@ KEY_TO_TEMPLATE_MAP = {
     "assets": "asset.yaml",
     "assets.accessControlList": "access-control-list.yaml",
     "assets.services": "asset-mapping.yaml",
+    "assets.services.releaseState": "api-service-instance.yaml",
     "assets.activate": "release-tag-asset.yaml",
     "product.activate": "release-tag-product.yaml",
     "product.plans": "product-plan.yaml",
     "product.plans.quotas": "quota.yaml",
     "product.activate.marketplace": "published-product.yaml",
+    "product.documentation.sections": "document-product.yaml",
+    "supportContact": "support-contact.yaml",
 }
+
+
+def get_template_filename(key_path, data=None):
+    # if key_path == "product.documentation" and data.get("defaults", False):
+    #     return KEY_TO_KIND_MAP.get(key_path)
+    # else:
+    #     return "document-product-default.yaml"
+
+    return KEY_TO_TEMPLATE_MAP.get(key_path)
 
 
 def find_key_path(d, target_key, current_path=None, list_index=None):

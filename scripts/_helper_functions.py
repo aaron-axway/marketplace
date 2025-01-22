@@ -103,9 +103,10 @@ def lookup_team_id(context, values, logger):
 
     if kind == "Asset" or kind == "Product":
         keys.extend(["owner", "teamName"])
-    elif kind == "ProductPlan":
+    elif kind == "ProductPlan" or kind == "PublishedProduct":
         keys = keys[:-2]
         keys.extend(["owner", "teamName"])
+
     for k in keys:
         if isinstance(v, dict) and k in v:
             v = v[k]
@@ -126,6 +127,7 @@ def generate_asset_name(context, values, logger):
     context["kind"] = "Asset"
     return generate_name(context, values)
 
+
 def format_name(context, values, logger, param):
     # list_index = context.get("list_index") if context else None
     # keys = context.get("key_path").split(".") if context else None
@@ -138,6 +140,7 @@ def format_name(context, values, logger, param):
     #     elif isinstance(v, list) and k == "[]":
     #         v = v[list_index.pop(0)]
     return param.lower().replace(" ", "-")
+
 
 # Helper function to generate names
 def generate_name(context, values, logger):

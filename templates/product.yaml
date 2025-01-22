@@ -8,9 +8,9 @@ owner:
   id: "{{func.lookup_team_id}}"
 spec:
   assets: "{{func.get_asset_name_list}}"
-  # categories:
-    # - cases-higherpriority
+  categories: "{{product.categories}}"
   description: "{{product.description}}"
+  supportContact: "{{supportContact.name}}"
 attributes: {}
 tags: []
 state: draft

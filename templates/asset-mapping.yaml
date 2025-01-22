@@ -10,7 +10,7 @@ spec:
   inputs:
     apiService: management/{{assets.[].services.[].environment}}/{{assets.[].services.[].name}}
     apiServiceInstance: management/{{assets.[].services.[].environment}}/{{assets.[].services.[].name}}
-    # assetResourceTitle: "{{assets.[].services.[].title}}"
+    assetResourceTitle: "{{assets.[].services.[].title}}"
 # spec:
 #   inputs:
 #     # Indicates which APIService to monitor.

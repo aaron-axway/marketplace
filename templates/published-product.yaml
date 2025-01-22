@@ -1,16 +1,13 @@
-{
-    group: "catalog",
-    apiVersion: "v1alpha1",
-    kind: "PublishedProduct",
-    metadata: {
-        scope: {
-            kind: "Marketplace",
-            name: "{{product.activate.marketplace.name}}",
-        }
-    },
-    spec: {
-        product: {
-            name: "{{product.name}}"
-        }
-    }
-}
+group: catalog
+apiVersion: v1alpha1
+kind: PublishedProduct
+owner:
+    type: team
+    id: "{{func.lookup_team_id}}"
+metadata:
+    scope:
+        kind: Marketplace
+        name: "{{product.activate.marketplace.name}}"
+spec:
+    product:
+        name: "{{product.name}}"

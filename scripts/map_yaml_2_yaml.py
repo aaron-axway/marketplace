@@ -108,24 +108,6 @@ def load_helper_functions():
 HELPER_FUNCTIONS = load_helper_functions()
 
 
-def ordered_dump(data, stream=None, Dumper=yaml.SafeDumper, **kwds):
-
-    class OrderedDumper(Dumper):
-
-        def increase_indent(self, flow=False, indentless=False):
-            return super(OrderedDumper, self).increase_indent(flow, False)
-
-    def _dict_representer(dumper, data):
-        return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items())
-
-    def _list_representer(dumper, data):
-        return dumper.represent_sequence(yaml.resolver.BaseResolver.DEFAULT_SEQUENCE_TAG, data, flow_style=False)
-
-    OrderedDumper.add_representer(OrderedDict, _dict_representer)
-    OrderedDumper.add_representer(list, _list_representer)
-    return yaml.dump(data, stream, OrderedDumper, **kwds)
-
-
 def replace_placeholders(template, values, file_name, context=None):
     if context is None:
         kind = template.get("kind", None)
@@ -147,6 +129,8 @@ def replace_placeholders(template, values, file_name, context=None):
                     updated_template[k] = sub
             elif isinstance(sub, dict):
                 updated_template[k] = sub
+            elif isinstance(sub, str) and sub.isdigit():
+                updated_template[k] = int(sub)
             else:
                 if sub == "" or sub == None:
                     updated_template.pop(k, None)
@@ -184,11 +168,15 @@ def replace_placeholders(template, values, file_name, context=None):
                         logger.info(f"Updating '{placeholder}' in {file_name} with value '{value}'")
                 else:
                     logger.warning(f"Placeholder '{placeholder}' in {file_name} has no matching value")
-                if isinstance(value, dict):
+                if isinstance(value, dict) or isinstance(value, list):
                     return value
                 else:
                     template = template.replace(f"{{{{{{{placeholder}}}}}}}", yaml.dump(value, default_flow_style=False))
+
                 template = template.replace(f"{{{{{placeholder}}}}}", str(value) if value is not None else "")
+                if placeholder == "supportContact.microsoftTeams.url":
+                    template = y.FoldedScalarString(template)
+
         return template
     return template
 
@@ -242,6 +230,8 @@ def get_nested_value(values, key, context=None):
     for k in keys:
         if isinstance(v, dict) and k in v:
             v = v[k]
+            if k == "name":
+                v = v.lower().replace(" ", "-")
         elif isinstance(v, list) and k == "[]":
             v = v[list_index.pop(0)]
         else:
@@ -253,6 +243,11 @@ def write_yaml_file(yaml_data, output_folder):
     # Ensure output folder exists
     os.makedirs(output_folder, exist_ok=True)
     file_name = f"{yaml_data.get('kind')}.yaml"
+
+    if yaml_data.get("kind") == "Product":
+        y.update_icon_in_yaml(yaml_data, "./icons/api-icon.png")
+    elif yaml_data.get("kind") == "Asset":
+        y.update_icon_in_yaml(yaml_data, "./icons/api-asset-icon.png")
 
     if yaml_data.get("kind") == "ReleaseTag":
         file_name = (
@@ -267,7 +262,7 @@ def write_yaml_file(yaml_data, output_folder):
     with open(output_file, mode) as f:
         if mode == "a":
             f.write("\n---\n")
-        ordered_dump(yaml_data, f, default_flow_style=False)
+        y.ordered_dump(yaml_data, f, default_flow_style=False)
 
 
 def walk_keys(values, input_folder, output_folder, parent_key="", context=None):
@@ -289,11 +284,16 @@ def walk_keys(values, input_folder, output_folder, parent_key="", context=None):
         current_key = f"{current_key}.[]" if isinstance(value, list) else current_key
         context["key_path"] = current_key
         # Check if there's a template for this key
+
+        # !!!!!!!CLEAN UP: Remove this condition
         if current_key == "product.assets.[]":
             continue
 
+        if current_key == "assets.[].services.[].releaseState":
+            pass
+
         template_key = current_key.replace(".[]", "")
-        if (file_name := u.KEY_TO_TEMPLATE_MAP.get(template_key)) and os.path.exists(template_file := os.path.join(input_folder, file_name)):
+        if (file_name := u.get_template_filename(template_key)) and os.path.exists(template_file := os.path.join(input_folder, file_name)):
             logger.info(f"*Processing* key '{current_key}' with template: {template_file}")
             template = y.load_and_validate_yaml([template_file])
             context["kind"] = template.get("kind")
@@ -352,12 +352,30 @@ def walk_keys(values, input_folder, output_folder, parent_key="", context=None):
 
                 # Add tags and attributes if present
                 if value.get("tags") or value.get("attributes"):
+                    environments = y.collect_distinct_by_path(context.get("values", {}), "assets.services.environment")
+                    tags = value.get("tags", [])
+                    for env in environments:
+                        parts = env.split("-")
+                        region = "-".join(parts[-3:])
+                        # prefix = "-".join(parts[:-3])
+                        tags.append(f"env:{env}")
+                        tags.append(f"region:{region}")
+
                     updated_template["tags"] = value.get("tags", [])
                     updated_template["attributes"] = value.get("attributes", {})
 
                 # Write the updated template to the output file
                 write_yaml_file(updated_template, output_folder)
 
+        if current_key == "assets.[].services.[].releaseState":
+            updated_template = replace_placeholders(template, value, template_file, context=copy.deepcopy(context))
+            write_yaml_file(updated_template, output_folder)
+
+        # if current_key == "assets.[].lifecycle":
+        #     tmp = template["spec"]
+        #     tmp["autoRelease"] = {"releaseType": "major"}
+        #     updated_template["spec"] =tmp
+        
         # Recursively process nested keys
         if isinstance(value, dict):
             walk_keys(value, input_folder, output_folder, parent_key=current_key, context=copy.deepcopy(context))

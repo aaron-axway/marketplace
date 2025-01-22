@@ -3,6 +3,45 @@ from copy import deepcopy
 from glob import glob
 import os
 from collections import OrderedDict
+import base64
+from yaml.dumper import SafeDumper
+
+
+class FoldedScalarString(str):
+    pass
+
+
+def folded_scalar_representer(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style=">")
+
+
+def update_icon_in_yaml(data, image_path):
+    # Read the image and base64-encode it
+    with open(image_path, "rb") as f:
+        encoded_str = base64.b64encode(f.read()).decode("utf-8")
+
+    # Construct the data URI
+    data_uri = f"data:image/png;base64,{encoded_str}"
+    data["icon"] = FoldedScalarString(data_uri)
+
+
+def ordered_dump(data, stream=None, Dumper=yaml.SafeDumper, **kwds):
+    Dumper.add_representer(FoldedScalarString, folded_scalar_representer)
+
+    class OrderedDumper(Dumper):
+
+        def increase_indent(self, flow=False, indentless=False):
+            return super(OrderedDumper, self).increase_indent(flow, False)
+
+    def _dict_representer(dumper, data):
+        return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items())
+
+    def _list_representer(dumper, data):
+        return dumper.represent_sequence(yaml.resolver.BaseResolver.DEFAULT_SEQUENCE_TAG, data, flow_style=False)
+
+    OrderedDumper.add_representer(OrderedDict, _dict_representer)
+    OrderedDumper.add_representer(list, _list_representer)
+    return yaml.dump(data, stream, OrderedDumper, **kwds)
 
 
 class DuplicateKeyError(Exception):
@@ -89,6 +128,33 @@ def get_by_path(d, path):
     for key in keys:
         value = value[key]
     return value
+
+
+def collect_distinct_by_path(data, keys):
+    values = collect_by_path(data, keys)
+    return list(set(values))
+
+
+def collect_by_path(data, keys):
+    if isinstance(keys, str):
+        keys = keys.split(".")
+    else:
+        keys = list(keys)
+
+    if not keys:
+        return [data] if not isinstance(data, list) else data
+
+    key = keys[0]
+    if isinstance(data, list):
+        values = []
+        for item in data:
+            if key in item:
+                values.extend(collect_by_path(item[key], keys[1:]))
+        return values
+    elif isinstance(data, dict) and key in data:
+        return collect_by_path(data[key], keys[1:])
+
+    return []
 
 
 def set_by_path(d, path, value):

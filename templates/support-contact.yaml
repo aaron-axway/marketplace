@@ -1,0 +1,13 @@
+group: catalog
+apiVersion: v1alpha1
+kind: SupportContact
+name: "{{supportContact.name}}"
+title: "{{supportContact.name}}"
+spec:
+  email: "{{supportContact.email}}"
+  phoneNumber: "{{supportContact.phoneNumber}}"
+  alternativeContacts:
+    urls:
+      - type: msteams
+        title: "{{supportContact.microsoftTeams.title}}"
+        value: "{{supportContact.microsoftTeams.url}}"

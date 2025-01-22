@@ -131,19 +131,21 @@ product:
           pricing:
             cost: 0.01
             type: perunit
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
+  documentation:
+    sections:
+      - name: introduction
+        title: Introduction
+        rank: 0
+        description: >-
+          Welcome to the documentation for our RESTful API. This API allows you to
+          interact with our application programmatically by offering various
+          endpoints. Each endpoint is documented with its request and response
+          formats, including examples.
+      - name: authentication
+        title: Authentication
+        rank: 1
+        description: Refer to the resource specification for Authentication details.
+      - name: support
+        title: Support
+        rank: 2
+        description: See support view in the overview tab.

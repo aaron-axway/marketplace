@@ -10,6 +10,10 @@ echo "Creating asset access control list ..."
 axway central create -f out_yaml/AccessControlList-Asset.yaml
 echo "Asset access control list created."
 
+echo "Updating API Service Instance..."
+axway central apply -f out_yaml/APIServiceInstance.yaml --subresource lifecycle
+echo "API Service Instance updated."
+
 echo "Creating asset release..."
 axway central create -f out_yaml/ReleaseTag-Asset-aj-asset-1-cli.yaml -y
 echo "Asset release created."

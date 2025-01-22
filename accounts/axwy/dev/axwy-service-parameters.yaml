@@ -1,16 +1,17 @@
 assets:
   - name: AJ Asset 1 CLI
     description: AJ Asset 1 CLI Description
-    activate:
-      release: true
+    lifecycle:
       releaseType: major
     services:
     - name: apiw-enterprise-idcards
       environment: cnc-aws-iapp-tst-axwy-us-east-2
-      # title: My Custom API Name
+      title: apiw-enterprise-idcards-us-east-2
+      releaseState: active
     - name: pcst-qdev
       environment: cnc-aws-iapp-dev-axwy-us-east-1
-      # title: Some API
+      title: pcst-qdev-us-east-1
+      releaseState: active
     owner:
       teamName: TEST_TEAM_1
     accessControlList:
@@ -31,6 +32,8 @@ assets:
 product:
   name: AJ Product CLI
   description: AJ Product CLI Description
+  categories:
+    - cases-higherpriority
   owner:
     teamName: TEST_TEAM_1
   assets:
@@ -65,8 +68,15 @@ product:
     productid: iapp
     dataclass: internal
   tags:
-  - SNGroup:api-gateway-team
-  - email:api_gateway_team@centene.co
-  - appid:axwy
-  - productid:iapp
-  - dataclass:internal
+    - SNGroup:api-gateway-team
+    - email:api_gateway_team@centene.co
+    - appid:axwy
+    - productid:iapp
+    - dataclass:internal
+supportContact:
+  name: "John Doe"
+  email: "Public_Cloud_Services_Support@centene.com"
+  phoneNumber: '+17024816033'
+  microsoftTeams:
+    title: "Chat with support on Teams"
+    url: "https://teams.microsoft.com/l/team/19%3AXvMEGNr5KgjbLfFpgDckKa2WQGDusZvPQcMV2XwOsqM1%40thread.tacv2/conversations?groupId=8963fe50-6ee4-4e0e-a9a1-9781465fc8da&tenantId=f45ccc07-e57e-4d15-bf6f-f6cbccd2d395"

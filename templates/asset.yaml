@@ -9,8 +9,8 @@ owner:
   teamName: "{{assets.[].owner.teamName}}"
 spec:
   type: API
-  # categories:
-    # - aj-category
+  autoRelease:
+    releaseType: major
   description: "{{assets.[].description}}"
 access:
   approval: manual
