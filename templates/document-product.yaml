@@ -1,0 +1,13 @@
+group: catalog
+apiVersion: v1alpha1
+kind: Document
+name: "{{product.documentation.sections.[].name}}"
+title: "{{product.documentation.sections.[].title}}"
+metadata:
+  scope:
+    kind: Product
+    name: "{{product.name}}"
+spec:
+  rank: "{{product.documentation.sections.[].rank}}"
+  # sections: []
+  description: "{{product.documentation.sections.[].description}}"

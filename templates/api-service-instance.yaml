@@ -1,0 +1,11 @@
+group: management
+apiVersion: v1alpha1
+kind: APIServiceInstance
+name: "{{assets.[].services.[].name}}"
+metadata:
+  scope:
+    kind: Environment
+    name: "{{assets.[].services.[].environment}}"
+lifecycle:
+  releaseState:
+    name: active
