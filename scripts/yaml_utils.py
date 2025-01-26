@@ -160,9 +160,33 @@ def collect_by_path(data, keys):
 def set_by_path(d, path, value):
     keys = path.split(".")
     current = d
-    for key in keys[:-1]:
-        current = current.setdefault(key, {})
-    current[keys[-1]] = value
+
+    for i, key in enumerate(keys[:-1]):
+        if isinstance(current, list):
+            key = int(key)  # Convert key to integer if we're inside a list
+            if key >= len(current):
+                current.append({})
+            current = current[key]
+        else:
+            current = current.setdefault(key, {})
+
+    last_key = keys[-1]
+
+    if isinstance(current, list):
+        last_key = int(last_key)  # Convert last key if it's inside a list
+        if last_key >= len(current):
+            current.append(value)
+        else:
+            if isinstance(current[last_key], list):
+                current[last_key].append(value)
+            else:
+                current[last_key] = value
+    else:
+        if last_key in current and isinstance(current[last_key], list):
+            current[last_key].append(value)
+        else:
+            current[last_key] = value
+
     return d
 
 

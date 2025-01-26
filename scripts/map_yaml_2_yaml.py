@@ -5,7 +5,7 @@ import yaml
 import argparse
 import logging
 from collections import OrderedDict
-from colorama import init, Fore, Style
+from logger_config import ColoredFormatter
 import re
 import importlib.util
 import copy
@@ -14,68 +14,13 @@ import shutil
 import utils as u
 import yaml_utils as y
 
-# Initialize colorama
-init(autoreset=True)
-
 # Setup logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 if logger.hasHandlers():
     logger.handlers.clear()
 
-
-class ColoredFormatter(logging.Formatter):
-
-    def format(self, record):
-        log_color = {"INFO": Fore.WHITE, "WARNING": Fore.YELLOW, "ERROR": Fore.RED, "DEBUG": Fore.BLUE}.get(record.levelname, Fore.WHITE)
-
-        # Colorize single-quoted text (without quotes)
-        def colorize_quotes(match):
-            inner_text = match.group(1)
-            return f"{Style.BRIGHT}{Fore.MAGENTA}{inner_text}{Style.RESET_ALL}{log_color}"
-
-        # Colorize exclamation-mark-wrapped text (without marks)
-        def colorize_exclamation(match):
-            inner_text = match.group(1)
-            return f"{Style.BRIGHT}{Fore.CYAN}{inner_text}{Style.RESET_ALL}{log_color}"
-
-        # Colorize astrik-wrapped text (without marks)
-        def colorize_astrik(match):
-            inner_text = match.group(1)
-            return f"{Style.BRIGHT}{Fore.BLUE}{inner_text}{Style.RESET_ALL}{log_color}"
-
-        # Colorize question-mark-wrapped text (without marks)
-        def colorize_questionmark(match):
-            inner_text = match.group(1)
-            return f"{Style.BRIGHT}{Fore.YELLOW}{inner_text}{Style.RESET_ALL}{log_color}"
-
-        def colorize_yaml(match):
-            yaml_str = match.group(1)
-            formatted_lines = []
-            for line in yaml_str.splitlines():
-                if ":" in line:
-                    key, value = line.split(":", 1)
-                    formatted_line = f"{Style.BRIGHT}{Fore.YELLOW}{key}{Style.RESET_ALL}:{Style.BRIGHT}{Fore.RED}{value}{Style.RESET_ALL}{log_color}"
-                    formatted_lines.append(formatted_line)
-            return "\n".join(formatted_lines)
-
-        message = record.getMessage()
-        # Apply single-quote highlighting: '...' -> inner text in magenta
-        message = re.sub(r"'([^']*)'", colorize_quotes, message)
-        # Apply exclamation-mark highlighting: !...! -> inner text in cyan
-        message = re.sub(r"!([^!]*)!", colorize_exclamation, message)
-        # Apply astrik highlighting: *...* -> inner text in blue
-        message = re.sub(r"\*([^!]*)\*", colorize_astrik, message)
-        # Apply question-mark highlighting: ?...? -> inner text in yellow
-        message = re.sub(r"\?([^!]*)\?", colorize_yaml, message)
-
-        if message.startswith("##"):
-            message = message[2:]  # Remove prefix
-            return f"{log_color}{message}{Style.RESET_ALL}"
-
-        return f"{log_color}{record.levelname}: {message}{Style.RESET_ALL}"
-
-
+# Add a console handler
 handler = logging.StreamHandler()
 handler.setFormatter(ColoredFormatter())
 logger.addHandler(handler)
@@ -248,6 +193,15 @@ def write_yaml_file(yaml_data, output_folder):
         y.update_icon_in_yaml(yaml_data, "./icons/api-icon.png")
     elif yaml_data.get("kind") == "Asset":
         y.update_icon_in_yaml(yaml_data, "./icons/api-asset-icon.png")
+        yaml_data_no_auto_release = yaml_data.copy()
+        del yaml_data_no_auto_release["spec"]["autoRelease"]
+        output_file = os.path.join(output_folder, f"no-auto-release-{file_name}")
+        # Open the file in append mode if it exists, else in write mode
+        mode = "a" if os.path.exists(output_file) else "w"
+        with open(output_file, mode) as f:
+            if mode == "a":
+                f.write("\n---\n")
+            y.ordered_dump(yaml_data_no_auto_release, f, default_flow_style=False)
 
     if yaml_data.get("kind") == "ReleaseTag":
         file_name = (
@@ -375,10 +329,34 @@ def walk_keys(values, input_folder, output_folder, parent_key="", context=None):
         #     tmp = template["spec"]
         #     tmp["autoRelease"] = {"releaseType": "major"}
         #     updated_template["spec"] =tmp
-        
+
         # Recursively process nested keys
         if isinstance(value, dict):
             walk_keys(value, input_folder, output_folder, parent_key=current_key, context=copy.deepcopy(context))
+
+
+def update_yaml_with_services(defaults_data, services_data, key_path):
+    # Extract services from assets.services
+    services = []
+    for asset in services_data.get("assets", []):
+        for service in asset.get("services", []):
+            services.append({"name": service["name"], "asset": asset["name"]})
+
+    # Navigate to the specified key path in defaults.yaml
+    keys = key_path.split(".")
+    data = defaults_data
+    for key in keys:
+        if isinstance(data, list):
+            data = [d[key] for d in data if key in d]
+        else:
+            data = data.get(key, {})
+
+    # If we reached a list of quotas, update each one
+    if isinstance(data, list):
+        for item in data:
+            item[0]["services"] = services
+
+    return defaults_data
 
 
 def main():
@@ -397,6 +375,7 @@ def main():
         logger.info(f"Defaults YAML data:")
         logger.info(f"##?{y.format_yaml(defaults_dict)}?")
 
+        defaults_dict = update_yaml_with_services(defaults_dict, combined_dict, "product.plans.quotas")
         combined_dict = y.deep_merge(defaults_dict, combined_dict)
         logger.info(f"Combined YAML data after applying defaults:")
         logger.info(f"##?{y.format_yaml(combined_dict)}?")

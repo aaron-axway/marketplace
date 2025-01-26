@@ -1,6 +1,8 @@
 assets:
   - name: AJ Asset 1 CLI
     description: AJ Asset 1 CLI Description
+    activate:
+      releaseType: major
     lifecycle:
       releaseType: major
     services:
@@ -38,25 +40,8 @@ product:
     teamName: TEST_TEAM_1
   assets:
     - name: AJ Asset 1 CLI
-  plans:
-    - quotas:
-        - services:
-          - name: "pcst-qdev"
-            asset: "AJ Asset 1 CLI"
-    - quotas:
-        - services:
-          - name: "pcst-qdev"
-            asset: "AJ Asset 1 CLI"
-    - quotas:
-        - services:
-          - name: "pcst-qdev"
-            asset: "AJ Asset 1 CLI"
-    - quotas:
-        - services:
-          - name: "pcst-qdev"
-            asset: "AJ Asset 1 CLI"
           
-      state: draft
+  state: draft
   activate:
     releaseType: major
     marketplace:
@@ -80,3 +65,10 @@ supportContact:
   microsoftTeams:
     title: "Chat with support on Teams"
     url: "https://teams.microsoft.com/l/team/19%3AXvMEGNr5KgjbLfFpgDckKa2WQGDusZvPQcMV2XwOsqM1%40thread.tacv2/conversations?groupId=8963fe50-6ee4-4e0e-a9a1-9781465fc8da&tenantId=f45ccc07-e57e-4d15-bf6f-f6cbccd2d395"
+team:
+  name: "TEST_TEAM_REST"
+  description: "TEST_TEAM_CLI Description"
+  idpMappings:
+  tags:
+    - SNGroup:api-gateway-team
+    - email:test
