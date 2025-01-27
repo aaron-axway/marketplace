@@ -5,51 +5,16 @@ import yaml
 import argparse
 import logging
 from collections import OrderedDict
-from logger_config import ColoredFormatter
+from logger_config import logger
+from _helper_functions import load_helper_functions
 import re
-import importlib.util
 import copy
 import shutil
 
 import utils as u
 import yaml_utils as y
 
-# Setup logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-if logger.hasHandlers():
-    logger.handlers.clear()
-
-# Add a console handler
-handler = logging.StreamHandler()
-handler.setFormatter(ColoredFormatter())
-logger.addHandler(handler)
-
-
-# Dynamically load all helper functions from _helper_functions.py
-def load_helper_functions():
-    helper_functions = {}
-    helper_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "_helper_functions.py")
-
-    if os.path.exists(helper_file):
-        try:
-            # Load the module from the file
-            spec = importlib.util.spec_from_file_location("helper_functions", helper_file)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-
-            # Extract all callable functions defined in the module
-            helper_functions = {
-                name: func for name, func in vars(module).items() if callable(func) and (not name.startswith("__") and not name.startswith("_"))
-            }
-            logger.info(f"Loaded helper functions: {', '.join(helper_functions.keys())}")
-        except Exception as e:
-            logger.error(f"Failed to load helper functions from {helper_file}: {e}")
-    else:
-        logger.warning(f"_helper_functions.py not found at {helper_file}. No helper functions loaded.")
-    return helper_functions
-
-
+# Load helper functions
 HELPER_FUNCTIONS = load_helper_functions()
 
 

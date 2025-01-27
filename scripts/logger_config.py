@@ -2,9 +2,6 @@ from colorama import init, Fore, Style
 import logging
 import re
 
-# Initialize colorama
-# init(autoreset=True)
-
 
 class ColoredFormatter(logging.Formatter):
     def __init__(self):
@@ -58,3 +55,15 @@ class ColoredFormatter(logging.Formatter):
             return f"{log_color}{message}{Style.RESET_ALL}"
 
         return f"{log_color}{record.levelname}: {message}{Style.RESET_ALL}"
+
+
+# Setup logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+if logger.hasHandlers():
+    logger.handlers.clear()
+
+# Add a console handler
+handler = logging.StreamHandler()
+handler.setFormatter(ColoredFormatter())
+logger.addHandler(handler)
