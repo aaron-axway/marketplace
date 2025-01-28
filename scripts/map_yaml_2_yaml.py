@@ -36,6 +36,9 @@ def replace_placeholders(template, values, file_name, context=None):
                 if updated_template.get(k, None):
                     updated_template[k].extend(sub)
                 else:
+                    if k == "name":
+                        v = v.lower().replace(" ", "-")
+
                     updated_template[k] = sub
             elif isinstance(sub, dict):
                 updated_template[k] = sub
@@ -140,8 +143,6 @@ def get_nested_value(values, key, context=None):
     for k in keys:
         if isinstance(v, dict) and k in v:
             v = v[k]
-            if k == "name":
-                v = v.lower().replace(" ", "-")
         elif isinstance(v, list) and k == "[]":
             v = v[list_index.pop(0)]
         else:
