@@ -1,7 +1,10 @@
 import os
 import requests
 import sys
+import argparse
 from oauth import get_access_token, get_session_token
+from yaml_utils import load_and_validate_yaml
+from fetch_team_ids import fetch_team_ids
 
 # Load required environment variables
 BASE_URL = os.getenv("BASE_URL")
@@ -96,13 +99,22 @@ API_TOKEN = access_token
 # Headers for authentication
 HEADERS = {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"}
 
-# Example new mapped team data
-new_team_data = {
-    "team_guid": "9fc8b8f4-d693-4027-aa34-6c5c9e15daf6",
-    "name": "apiCentralGroups",
-    "value": "NEW_GROUP_VALUE",
-    "roles": ["developer", "catalog_manager", "subscription_approver"],
-}
 
-# Run the update
-update_idp(new_team_data)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Create a team using a YAML configuration file.")
+    parser.add_argument("--yaml-file", required=True, help="Path to the YAML configuration file")
+    args = parser.parse_args()
+
+    data = load_and_validate_yaml([args.yaml_file])
+
+    idpData = data["team"]["idpMapping"]
+    teamName = data["team"]["name"]
+
+    team_list = fetch_team_ids()
+    for team in team_list:
+        if team.get("name") == teamName:
+            idpData["team_guid"] = team.get("guid")
+            break
+
+    # Run the update
+    update_idp(idpData)

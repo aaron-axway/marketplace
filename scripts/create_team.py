@@ -1,8 +1,8 @@
 import requests
 import os
+import argparse
 from oauth import get_access_token, get_session_token
 from yaml_utils import load_and_validate_yaml
-import logging
 
 BASE_URL = os.getenv("BASE_URL")
 ORG_GUID = os.getenv("ORG_GUID")
@@ -25,7 +25,10 @@ def create_team(data):
 
 
 if __name__ == "__main__":
-    current_dir = os.getcwd()
-    data = load_and_validate_yaml(["/Users/ajones/dev/centene/marketplace/accounts/axwy/dev/axwy-service-parameters.yaml"])
+    parser = argparse.ArgumentParser(description="Create a team using a YAML configuration file.")
+    parser.add_argument("--yaml-file", required=True, help="Path to the YAML configuration file")
+    args = parser.parse_args()
+
+    data = load_and_validate_yaml([args.yaml_file])
     result = create_team(data.get("team"))
     print(result)

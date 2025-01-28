@@ -68,7 +68,13 @@ supportContact:
 team:
   name: "TEST_TEAM_REST"
   description: "TEST_TEAM_CLI Description"
-  idpMappings:
+  idpMapping:
+    name: "apiCentralGroups"
+    value: "NEW_GROUP_VALUE"
+    roles:
+      - "developer"
+      - "catalog_manager"
+      - "subscription_approver"
   tags:
     - SNGroup:api-gateway-team
     - email:test
