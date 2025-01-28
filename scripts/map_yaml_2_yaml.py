@@ -18,6 +18,10 @@ import yaml_utils as y
 HELPER_FUNCTIONS = load_helper_functions()
 
 
+def handle_special_yaml_keys(yaml_key, value):
+    pass
+
+
 def replace_placeholders(template, values, file_name, context=None):
     if context is None:
         kind = template.get("kind", None)
@@ -37,16 +41,21 @@ def replace_placeholders(template, values, file_name, context=None):
                     updated_template[k].extend(sub)
                 else:
                     if k == "name":
-                        v = v.lower().replace(" ", "-")
+                        sub = sub.lower().replace(" ", "-")
 
                     updated_template[k] = sub
             elif isinstance(sub, dict):
                 updated_template[k] = sub
             elif isinstance(sub, str) and sub.isdigit():
+                if k == "name":
+                    pass
                 updated_template[k] = int(sub)
             else:
                 if sub == "" or sub == None:
                     updated_template.pop(k, None)
+                elif k == "name" or k == "supportContact":
+                    sub = sub.lower().replace(" ", "-")
+                    updated_template[k] = sub
                 else:
                     updated_template[k] = sub
         return updated_template
